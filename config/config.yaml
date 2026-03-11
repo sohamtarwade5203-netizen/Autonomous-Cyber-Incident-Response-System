@@ -1,0 +1,46 @@
+# System Configuration
+
+# Ollama Settings
+ollama:
+  model: "llama3"
+  base_url: "http://localhost:11434"
+  timeout: 60
+
+# Decision Engine Thresholds
+decision_engine:
+  auto_execute_threshold: 90  # Confidence >= 90% for auto-execution
+  recommend_threshold: 70     # Confidence >= 70% for recommendations
+  advisory_threshold: 50      # Confidence < 50% for advisory only
+
+# API Settings
+api:
+  host: "127.0.0.1"
+  port: 8000
+  title: "Cyber Incident Response AI"
+  version: "2.0.0-agentic"
+
+# Agent Settings
+agent:
+  max_playbook_retries: 2
+  playbook_validation_threshold: 60
+  reasoning_trace_enabled: true
+
+# Elasticsearch Settings
+elasticsearch:
+  hosts: ["http://localhost:9200"]
+  index_prefix: "cyber-ir"
+  bulk_size: 1000
+  timeout: 30
+  enabled: true
+
+# Database Settings
+database:
+  url: "sqlite:///./cyber_ir.db"
+  echo: false
+  pool_size: 10
+
+# Logging
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+

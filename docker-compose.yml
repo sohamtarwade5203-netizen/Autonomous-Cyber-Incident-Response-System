@@ -1,0 +1,112 @@
+version: '3.8'
+
+services:
+  # Elasticsearch - Log storage and search
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.11.0
+    container_name: cyber-ir-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - bootstrap.memory_lock=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - cyber-ir-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  # Ollama - Local LLM service
+  ollama:
+    image: ollama/ollama:latest
+    container_name: cyber-ir-ollama
+    volumes:
+      - ollama-data:/root/.ollama
+    ports:
+      - "11434:11434"
+    networks:
+      - cyber-ir-network
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    # Pull llama3 model on startup
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        ollama serve &
+        sleep 5
+        ollama pull llama3
+        wait
+
+  # Cyber Incident Response API
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: cyber-ir-api
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      ollama:
+        condition: service_healthy
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - DATABASE_URL=sqlite:///./cyber_ir.db
+    volumes:
+      - ./output:/app/output
+      - ./data:/app/data
+      - api-db:/app/database
+    ports:
+      - "8000:8000"
+    networks:
+      - cyber-ir-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # Optional: Prometheus for monitoring
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: cyber-ir-prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - cyber-ir-network
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    profiles:
+      - monitoring
+
+volumes:
+  es-data:
+    driver: local
+  ollama-data:
+    driver: local
+  api-db:
+    driver: local
+  prometheus-data:
+    driver: local
+
+networks:
+  cyber-ir-network:
+    driver: bridge

@@ -1,0 +1,116 @@
+High-Level Flow:
+
+SIEM / EDR Logs
+→ Feature Extraction
+→ Anomaly Detection
+→ UEBA Correlation
+→ Fidelity Ranking
+→ AI Response Playbook Generation (Offline LLM)
+
+Phase 1 Completed:
+
+Offline LLM initialized
+
+Security datasets prepared
+
+
+
+Phase 2 Completed:
+
+SIEM/EDR logs ingested from Parquet format
+
+Alerts standardized into a common schema
+
+Output ready for anomaly detection and correlation
+
+
+
+Phase 3 Completed:
+
+Unsupervised anomaly detection using PyOD (Isolation Forest)
+
+Automatic identification of rare and suspicious security events
+
+Anomaly scores generated for downstream correlation and response
+
+Enhancement Added:
+
+Time-based burst detection implemented to identify fast-moving attacks
+
+Alerts grouped into short time windows to detect sudden spikes in activity
+
+Final anomaly decision combines statistical rarity and temporal burst behavior
+
+
+
+Phase 4 Completed:
+
+Behavioral analytics (UEBA) applied on anomalous alerts
+
+Correlated multiple alerts into single security incidents
+
+Reduced alert noise and analyst fatigue
+
+Enhancement Added:
+
+Multi-layer anomaly confirmation applied at the incident level
+
+Combined statistical anomalies, temporal burst signals, behavioral risk, and rule-based severity
+
+Unified anomaly confidence score generated for each incident
+
+
+
+Phase 5 Completed:
+
+Fidelity ranking engine implemented
+
+Incidents prioritized using alert volume and behavioral risk
+
+High-confidence incidents surfaced for analyst attention
+
+Enhancement Added:
+
+Confidence banding introduced (HIGH / MEDIUM / LOW)
+
+Fidelity scores made explainable and analyst-friendly
+
+Improved trust, auditability, and decision transparency
+
+
+
+Phase 6 Completed:
+
+Autonomous incident response playbook generation
+
+Offline LLM (Ollama) used for secure response logic
+
+Step-by-step actions generated based on incident context and fidelity
+
+Safety & Governance Controls:
+
+Confidence-aware execution ensures human-in-the-loop oversight
+
+High-confidence incidents receive automated guidance
+
+Medium/low confidence incidents provide advisory-only recommendations
+
+Final System Capabilities (Updated):
+
+End-to-end autonomous cyber incident response pipeline
+
+Multi-signal anomaly detection with temporal awareness
+
+UEBA-based behavioral correlation across alerts
+
+Explainable fidelity ranking with confidence bands
+
+Offline, secure AI-generated response playbooks
+
+Reduced detection and response time
+
+Significant reduction in analyst fatigue
+
+Fully local processing with zero external data transfer
+
+End of Architecture Description

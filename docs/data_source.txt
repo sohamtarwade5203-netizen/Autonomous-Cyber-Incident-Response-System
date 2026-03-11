@@ -1,0 +1,13 @@
+Data Source:
+CIC-IDS2017 (Canadian Institute for Cybersecurity)
+
+Format:
+Parquet files (cleaned, no metadata version)
+
+Purpose:
+Used to simulate SIEM/EDR security alerts in a banking SOC
+environment due to unavailability of real production logs.
+
+Privacy:
+No personally identifiable information (PII).
+All processing performed locally and offline.
